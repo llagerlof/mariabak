@@ -47,7 +47,7 @@ if (!is_dir($backup_dir)) {
 
 if (!empty(glob("$backup_dir/*.sql"))) {
     echo "> Error: Directory $backup_dir already contains backup files.\n\n";
-    $a = readline("Ovewrite existing files? (y/n) [default n]: ");
+    $a = readline("Overwrite existing files? (y/n) [default n]: ");
     if (trim(strtolower($a)) != 'y') {
         die("\n> Backup cancelled.\n");
     }
