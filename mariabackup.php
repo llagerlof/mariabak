@@ -9,7 +9,7 @@ try {
 
 // Get all database names
 try {
-    $stmt = $db->query("SHOW DATABASES where `Database` not like '%\_schema' and `Database` not like 'mysql'");
+    $stmt = $db->query("SHOW DATABASES");
 } catch (Exception $e) {
     die("> Error retrieving databases list.  (exception message: " . $e->getMessage() . ")");
 }
@@ -31,7 +31,7 @@ print_r($databases);
 // Make a backup of each database in the list to a separate file using exec()
 foreach ($databases as $database) {
     echo "> Backuping database {$database}... ";
-    $cmd = "mysqldump -u root $database > $database.sql";
+    $cmd = "mysqldump -u root --single-transaction $database > $database.sql";
     exec($cmd);
     echo "done.\n\n";
 }
