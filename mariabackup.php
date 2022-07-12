@@ -56,7 +56,7 @@ if (!empty(glob("$backup_dir/*.sql"))) {
 // Make a backup of each database in the list to a separate file using exec()
 foreach ($databases as $database) {
     echo "\n> Backuping database {$database} to $backup_dir... ";
-    $cmd = "mysqldump -u root --single-transaction $database > $backup_dir/$database.sql";
+    $cmd = "mysqldump --routines --triggers --single-transaction -u root $database > $backup_dir/$database.sql";
     exec($cmd);
     echo "done.\n";
 }
