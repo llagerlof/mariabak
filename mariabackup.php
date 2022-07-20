@@ -29,6 +29,33 @@ try {
     die("> Error retrieving system variables.  (exception message: " . $e->getMessage() . ")\n");
 }
 $system_variables = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$csv_system_variables = array2csv($system_variables);
+
+// Get all users and hosts. Will be included in USER_HOSTS.txt
+try {
+    $stmt = $db->query("select distinct u.user as user, u.host as host from mysql.user u");
+} catch (Exception $e) {
+    die("> Error retrieving users and hosts.  (exception message: " . $e->getMessage() . ")\n");
+}
+$user_hosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$csv_user_hosts = array2csv($user_hosts);
+
+// Get all grants for $user_hosts. Will be included in PERMISSIONS.txt
+$grants_commands = '';
+foreach ($user_hosts as $user_host) {
+    $grants_commands .= $user_host['user'] . '@' . $user_host['host'] . "\n\n";
+
+    try {
+        $stmt = $db->query("show grants for '" . $user_host['user'] . "'@'" . $user_host['host']."'");
+        $grants = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($grants as $grant) {
+            $grants_commands .= $grant . "\n";
+        }
+        $grants_commands .= "\n\n";
+    } catch (Exception $e) {
+        die("> Error retrieving grants.  (exception message: " . $e->getMessage() . ")\n");
+    }
+}
 
 // Get all database names
 try {
@@ -78,7 +105,17 @@ if (!empty(glob("$backup_dir/*.sql"))) {
 
 // Backup system variables
 echo "\n> Backuping system variables to SYSTEM_VARIABLES.txt... ";
-file_put_contents("$backup_dir/SYSTEM_VARIABLES.txt", print_r($system_variables, true));
+file_put_contents("$backup_dir/SYSTEM_VARIABLES.txt", $csv_system_variables);
+echo "done.\n";
+
+// Backup users ans hosts
+echo "\n> Backupin users and hosts to USER_HOSTS.txt... ";
+file_put_contents("$backup_dir/USERS_HOSTS.txt", $csv_user_hosts);
+echo "done.\n";
+
+// Backup grants
+echo "\n> Backuping grants to PERMISSIONS.txt... ";
+file_put_contents("$backup_dir/PERMISSIONS.txt", $grants_commands);
 echo "done.\n";
 
 // Make a backup of each database in the list to a separate file using exec()
@@ -127,4 +164,34 @@ function str2filename(string $str): string
     $str = preg_replace('/^[\-_\.]+/', '', $str);
 
     return trim($str);
+}
+
+/**
+ * Convert a 2d array, table-like, to CSV format
+ *
+ * @param array $array_2d
+ *
+ * @return string CSV
+ */
+function array2csv(array $array_2d): string
+{
+    if (!is_array($array_2d)) {
+        return '';
+    }
+    if (empty($array_2d)) {
+        return '';
+    }
+
+    $csv = '';
+    $column_position = 1;
+    $column_count = count($array_2d[0]);
+    foreach ($array_2d[0] as $column => $value) {
+        $csv .= $column . ($column_position != $column_count ? ',' : "\n");
+        $column_position++;
+    }
+    foreach ($array_2d as $row) {
+        $csv .= implode(',', $row) . "\n";
+    }
+
+    return $csv;
 }
