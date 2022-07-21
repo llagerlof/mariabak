@@ -6,13 +6,8 @@ if (count($argv) == 1) {
     die("  php mariabackup.php --databases=db1,db2\n");
 }
 
-// Extract option --databases
-foreach($argv as $arg) {
-    if (strpos($arg, "--databases=") !== false) {
-        $param_pieces = explode("=", $arg);
-        $databases_selected = explode(",", $param_pieces[1]);
-    }
-}
+// User selected databases
+$databases_selected = pvalues('--databases');
 
 // Connect to MariaDB database using PDO
 try {
@@ -224,4 +219,42 @@ function array2csv(array $array_2d): string
     }
 
     return $csv;
+}
+
+/**
+ * Paramete value. Return the parameter value passed to the script, or false if not found in the command line arguments.
+ *
+ * @param string $param
+ *
+ * @return string|bool
+ */
+function pvalue(string $param): mixed
+{
+    global $argv;
+
+    $param_value = false;
+    foreach($argv as $arg) {
+        if (strpos($arg, $param . '=') !== false) {
+            $param_pieces = explode("=", $arg);
+            $param_value = trim($param_pieces[1] ?? '');
+        }
+    }
+
+    return $param_value;
+}
+
+/**
+ * Parameter values. Return an array with all the parameter comma-separated values.
+ *
+ * @param string $param
+ *
+ * @return array
+ */
+function pvalues(string $param): array
+{
+    global $argv;
+
+    $param_value = pvalue($param);
+
+    return array_filter(explode(',', $param_value));
 }
