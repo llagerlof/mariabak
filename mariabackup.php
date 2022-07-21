@@ -17,37 +17,17 @@ try {
 }
 
 // Get the @@GLOBAL.basedir to use on directory name
-try {
-    $stmt = $db->query("select @@GLOBAL.basedir as basedir");
-} catch (Exception $e) {
-    die("> Error retrieving @@GLOBAL.basedir.  (exception message: " . $e->getMessage() . ")\n");
-}
-$basedir = $stmt->fetchColumn();
+$basedir = statement('select @@GLOBAL.basedir as basedir', 'Error retrieving @@GLOBAL.basedir.')->fetchColumn();
 
 // Get the @@GLOBAL.datadir to use on directory name
-try {
-    $stmt = $db->query("select @@GLOBAL.datadir as datadir");
-} catch (Exception $e) {
-    die("> Error retrieving @@GLOBAL.datadir.  (exception message: " . $e->getMessage() . ")\n");
-}
-$datadir = $stmt->fetchColumn();
+$datadir = statement('select @@GLOBAL.datadir as datadir', 'Error retrieving @@GLOBAL.datadir.')->fetchColumn();
 
 // Get all system variables. Will be included in SYSTEM_VARIABLES.txt
-try {
-    $stmt = $db->query("show variables");
-} catch (Exception $e) {
-    die("> Error retrieving system variables.  (exception message: " . $e->getMessage() . ")\n");
-}
-$system_variables = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$system_variables = statement('show variables','Error retrieving system variables.')->fetchAll(PDO::FETCH_ASSOC);
 $csv_system_variables = array2csv($system_variables);
 
 // Get all users and hosts. Will be included in USER_HOSTS.txt
-try {
-    $stmt = $db->query("select distinct u.user as user, u.host as host from mysql.user u");
-} catch (Exception $e) {
-    die("> Error retrieving users and hosts.  (exception message: " . $e->getMessage() . ")\n");
-}
-$user_hosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$user_hosts = statement('select distinct u.user as user, u.host as host from mysql.user u', 'Error retrieving users and hosts.')->fetchAll(PDO::FETCH_ASSOC);
 $csv_user_hosts = array2csv($user_hosts);
 
 // Get all grants for $user_hosts. Will be included in PERMISSIONS.txt
@@ -55,34 +35,19 @@ $grants_commands = '';
 foreach ($user_hosts as $user_host) {
     $grants_commands .= $user_host['user'] . '@' . $user_host['host'] . "\n\n";
 
-    try {
-        $stmt = $db->query("show grants for '" . $user_host['user'] . "'@'" . $user_host['host']."'");
-        $grants = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        foreach ($grants as $grant) {
-            $grants_commands .= $grant . "\n";
-        }
-        $grants_commands .= "\n\n";
-    } catch (Exception $e) {
-        die("> Error retrieving grants.  (exception message: " . $e->getMessage() . ")\n");
+    $grants = statement("show grants for '" . $user_host['user'] . "'@'" . $user_host['host']."'", 'Error retrieving grants.')->fetchAll(PDO::FETCH_COLUMN);
+    foreach ($grants as $grant) {
+        $grants_commands .= $grant . "\n";
     }
+    $grants_commands .= "\n\n";
 }
 
 // Get all databases names
-try {
-    $stmt = $db->query("SHOW DATABASES");
-} catch (Exception $e) {
-    die("> Error retrieving databases list.  (exception message: " . $e->getMessage() . ")\n");
-}
+$databases = statement("show databases", "Error retrieving databases list.")->fetchAll(PDO::FETCH_COLUMN);
 
 // Check if at least one database was returned
-if ($stmt->rowCount() == 0) {
+if (count($databases) === 0) {
     die("> No databases found.\n");
-}
-
-try {
-    $databases = $stmt->fetchAll(PDO::FETCH_COLUMN);
-} catch (Exception $e) {
-    die("> Error fetching database names from statement.  (exception message: " . $e->getMessage() . ")\n");
 }
 
 // Make sure one or more selected databases exists
@@ -100,7 +65,7 @@ if (empty($databases_selected)) {
 // Print selected databases
 echo("> Selected databases:\n");
 foreach ($databases_selected as $database) {
-    echo("  " . $database . "\n");
+    echo("  - " . $database . "\n");
 }
 
 echo "\n";
@@ -259,4 +224,25 @@ function pvalues(string $param): array
     $param_value = pvalue($param);
 
     return array_filter(explode(',', $param_value));
+}
+
+/**
+ * Execute a query and return a PDOStatement object.
+ *
+ * @param string $query
+ * @param string $error_message
+ *
+ * @return PDOStatement
+ */
+function statement(string $query, string $error_message): PDOStatement
+{
+    global $db;
+
+    try {
+        $stmt = $db->query($query);
+    } catch (Exception $e) {
+        die("> " . $error_message . "  (exception message: " . $e->getMessage() . ")\n");
+    }
+
+    return $stmt;
 }
