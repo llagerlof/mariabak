@@ -1,4 +1,19 @@
 <?php
+// Validate if any option was provided
+if (count($argv) == 1) {
+    echo("> Usage:\n");
+    echo("  php mariabackup.php --databases=*\n");
+    die("  php mariabackup.php --databases=db1,db2\n");
+}
+
+// Extract option --databases
+foreach($argv as $arg) {
+    if (strpos($arg, "--databases=") !== false) {
+        $param_pieces = explode("=", $arg);
+        $databases_selected = explode(",", $param_pieces[1]);
+    }
+}
+
 // Connect to MariaDB database using PDO
 try {
     $db = new PDO('mysql:host=localhost', 'root', '');
@@ -75,8 +90,23 @@ try {
     die("> Error fetching database names from statement.  (exception message: " . $e->getMessage() . ")\n");
 }
 
-// Print databases found
-print_r($databases);
+// Make sure all selected databases exist
+if (in_array('*', $databases_selected)) {
+    $databases_selected = $databases;
+} else {
+    $databases_selected = array_intersect($databases, $databases_selected);
+}
+
+// Check if at least one database was selected
+if (empty($databases_selected)) {
+    die("> No database(s) selected.\n");
+}
+
+// Print selected database(s)
+echo("> Selected databases:\n");
+foreach ($databases_selected as $database) {
+    echo("  " . $database . "\n");
+}
 
 echo "\n";
 
@@ -109,7 +139,7 @@ file_put_contents("$backup_dir/SYSTEM_VARIABLES.txt", $csv_system_variables);
 echo "done.\n";
 
 // Backup users ans hosts
-echo "\n> Backupin users and hosts to USER_HOSTS.txt... ";
+echo "\n> Backuping users and hosts to USER_HOSTS.txt... ";
 file_put_contents("$backup_dir/USERS_HOSTS.txt", $csv_user_hosts);
 echo "done.\n";
 
@@ -119,14 +149,14 @@ file_put_contents("$backup_dir/PERMISSIONS.txt", $grants_commands);
 echo "done.\n";
 
 // Make a backup of each database in the list to a separate file using exec()
-foreach ($databases as $database) {
+foreach ($databases_selected as $database) {
     echo "\n> Backuping database {$database} to $backup_dir... ";
     $cmd = "mysqldump --routines --triggers --single-transaction -u root $database > $backup_dir/$database.sql";
     exec($cmd);
     echo "done.\n";
 }
 
-die ("Backup finished.\n");
+die("> Backup finished.\n");
 
 
 /* Utility functions */
