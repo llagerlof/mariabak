@@ -16,7 +16,7 @@ try {
     die("> Error connecting to database server.  (exception message: " . $e->getMessage() . ")\n");
 }
 
-// Get the @@GLOBAL.basedir and @@GLOBAL.basedir to use on directory name
+// Get the @@GLOBAL.basedir to use on directory name
 try {
     $stmt = $db->query("select @@GLOBAL.basedir as basedir");
 } catch (Exception $e) {
@@ -24,7 +24,7 @@ try {
 }
 $basedir = $stmt->fetchColumn();
 
-// Get the @@GLOBAL.datadir and @@GLOBAL.datadir to use on directory name
+// Get the @@GLOBAL.datadir to use on directory name
 try {
     $stmt = $db->query("select @@GLOBAL.datadir as datadir");
 } catch (Exception $e) {
@@ -67,7 +67,7 @@ foreach ($user_hosts as $user_host) {
     }
 }
 
-// Get all database names
+// Get all databases names
 try {
     $stmt = $db->query("SHOW DATABASES");
 } catch (Exception $e) {
@@ -85,7 +85,7 @@ try {
     die("> Error fetching database names from statement.  (exception message: " . $e->getMessage() . ")\n");
 }
 
-// Make sure all selected databases exist
+// Make sure one or more selected databases exists
 if (in_array('*', $databases_selected)) {
     $databases_selected = $databases;
 } else {
@@ -97,7 +97,7 @@ if (empty($databases_selected)) {
     die("> No database(s) selected.\n");
 }
 
-// Print selected database(s)
+// Print selected databases
 echo("> Selected databases:\n");
 foreach ($databases_selected as $database) {
     echo("  " . $database . "\n");
@@ -105,6 +105,7 @@ foreach ($databases_selected as $database) {
 
 echo "\n";
 
+// Create the backup directory
 $backup_dir = getcwd() . '/backup-db_' . date('Y-m-d_H-i-s') . '_basedir[' . str2filename($basedir) . ']_datadir[' . str2filename($datadir) . ']';
 
 if (file_exists($backup_dir) && !is_dir($backup_dir)) {
@@ -120,6 +121,7 @@ if (!is_dir($backup_dir)) {
     }
 }
 
+// Check if backup directory already have backup files (.sql)
 if (!empty(glob("$backup_dir/*.sql"))) {
     echo "> Error: Directory $backup_dir already contains backup files.\n\n";
     $a = readline("Overwrite existing files? (y/n) [default n]: ");
@@ -143,7 +145,7 @@ echo "\n> Backuping grants to PERMISSIONS.txt... ";
 file_put_contents("$backup_dir/PERMISSIONS.txt", $grants_commands);
 echo "done.\n";
 
-// Make a backup of each database in the list to a separate file using exec()
+// Make a backup of each database in the list to a separate file using mysqldump
 foreach ($databases_selected as $database) {
     echo "\n> Backuping database {$database} to $backup_dir... ";
     $cmd = "mysqldump --routines --triggers --single-transaction -u root $database > $backup_dir/$database.sql";
@@ -151,13 +153,13 @@ foreach ($databases_selected as $database) {
     echo "done.\n";
 }
 
-die("> Backup finished.\n");
+die("\n> Backup finished.\n");
 
 
 /* Utility functions */
 
 /**
- * Convert any string to a valid filename
+ * Convert string to a valid filename
  *
  * @param string $str Any string
  *
@@ -222,7 +224,7 @@ function array2csv(array $array_2d): string
 }
 
 /**
- * Paramete value. Return the parameter value passed to the script, or false if not found in the command line arguments.
+ * Parameter value. Return the parameter value passed to the script, or false if not found in the command line arguments.
  *
  * @param string $param
  *
