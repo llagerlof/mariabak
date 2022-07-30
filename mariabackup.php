@@ -195,7 +195,7 @@ function array2csv(array $array_2d): string
  *
  * @return string|bool
  */
-function pvalue(string $param): mixed
+function pvalue(string $param)
 {
     global $argv;
 
