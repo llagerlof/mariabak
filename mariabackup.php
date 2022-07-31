@@ -6,8 +6,11 @@ if (count($argv) == 1) {
     die("  php mariabackup.php --databases=db1,db2\n");
 }
 
-// User selected databases
+// Selected databases
 $databases_selected = pvalues('--databases');
+
+// Selected tables to ignore data, but keeping structure
+$tables_ignored_data = pvalues('--ignore-data');
 
 // Connect to MariaDB database using PDO
 try {
@@ -113,8 +116,15 @@ echo "done.\n";
 // Make a backup of each database in the list to a separate file using mysqldump
 foreach ($databases_selected as $database) {
     echo "\n> Backuping database {$database} to $backup_dir... ";
-    $cmd = "mysqldump --routines --triggers --single-transaction -u root $database > $backup_dir/$database.sql";
-    exec($cmd);
+
+    $cmd_structure = "mysqldump --routines --triggers --single-transaction --no-data -u root $database > $backup_dir/$database.sql";
+    exec($cmd_structure);
+
+    $arguments_ignored_tables = argumentsIgnoredTables($database);
+
+    $cmd_data = "mysqldump --single-transaction --no-create-info $arguments_ignored_tables -u root $database >> $backup_dir/$database.sql";
+    exec($cmd_data);
+
     echo "done.\n";
 }
 
@@ -186,6 +196,32 @@ function array2csv(array $array_2d): string
     }
 
     return $csv;
+}
+
+/**
+ * Build a string to represent the ignored tables arguments
+ *
+ * @param string $database The database name.
+ * 
+ * @return string
+ */
+function argumentsIgnoredTables($database): string
+{
+    global $tables_ignored_data;
+
+    if (trim($database) == '' || empty($tables_ignored_data)) {
+        return '';
+    }
+
+    $ignored_filtered = array_filter($tables_ignored_data, function($table) use ($database) {
+        return preg_match('/^' . $database . '\./', $table);
+    });
+
+    $built_arguments = array_map(function($table_name) {
+        return '--ignore-table=' . $table_name;
+    }, $ignored_filtered);
+
+    return implode(' ', $built_arguments);
 }
 
 /**
