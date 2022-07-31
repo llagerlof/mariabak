@@ -33,7 +33,7 @@ $csv_system_variables = array2csv($system_variables);
 $user_hosts = statement('select distinct u.user as user, u.host as host from mysql.user u', 'Error retrieving users and hosts.')->fetchAll(PDO::FETCH_ASSOC);
 $csv_user_hosts = array2csv($user_hosts);
 
-// Get all grants for $user_hosts. Will be included in PERMISSIONS.txt
+// Get all grants for $user_hosts. Will be included in GRANTS.txt
 $grants_commands = '';
 foreach ($user_hosts as $user_host) {
     $grants_commands .= $user_host['user'] . '@' . $user_host['host'] . "\n\n";
@@ -109,8 +109,8 @@ file_put_contents("$backup_dir/USERS_HOSTS.txt", $csv_user_hosts);
 echo "done.\n";
 
 // Backup grants
-echo "\n> Backuping grants to PERMISSIONS.txt... ";
-file_put_contents("$backup_dir/PERMISSIONS.txt", $grants_commands);
+echo "\n> Backuping grants to GRANTS.txt... ";
+file_put_contents("$backup_dir/GRANTS.txt", $grants_commands);
 echo "done.\n";
 
 // Make a backup of each database in the list to a separate file using mysqldump
