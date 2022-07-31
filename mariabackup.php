@@ -81,7 +81,7 @@ if (file_exists($backup_dir) && !is_dir($backup_dir)) {
 }
 
 if (!is_dir($backup_dir)) {
-    if (!is_writable(dirname(__FILE__))) {
+    if (!is_writable(getcwd())) {
         die("> Error: Directory $backup_dir could not be created. Permission denied.\n");
     } else {
         echo "> Creating directory $backup_dir...\n";
