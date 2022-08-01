@@ -149,21 +149,6 @@ if (!empty(glob("$backup_dir/*.sql"))) {
     }
 }
 
-// Backup system variables
-echo "\n> Backuping system variables to 'SYSTEM_VARIABLES.txt' ... ";
-file_put_contents("$backup_dir/SYSTEM_VARIABLES.txt", $csv_system_variables);
-echo "done.\n";
-
-// Backup users ans hosts
-echo "\n> Backuping users and hosts to 'USER_HOSTS.txt' ... ";
-file_put_contents("$backup_dir/USERS_HOSTS.txt", $csv_user_hosts);
-echo "done.\n";
-
-// Backup grants
-echo "\n> Backuping grants to 'GRANTS.txt' ... ";
-file_put_contents("$backup_dir/GRANTS.txt", $grants_commands);
-echo "done.\n";
-
 // Make a backup of each database in the list to a separate file using mysqldump
 foreach ($databases_selected as $database) {
     echo "\n> Backuping database '{$database}' ... ";
@@ -178,6 +163,21 @@ foreach ($databases_selected as $database) {
 
     echo "done.\n";
 }
+
+// Backup system variables
+echo "\n> Backuping system variables to 'SYSTEM_VARIABLES.txt' ... ";
+file_put_contents("$backup_dir/SYSTEM_VARIABLES.txt", $csv_system_variables);
+echo "done.\n";
+
+// Backup users ans hosts
+echo "\n> Backuping users and hosts to 'USER_HOSTS.txt' ... ";
+file_put_contents("$backup_dir/USERS_HOSTS.txt", $csv_user_hosts);
+echo "done.\n";
+
+// Backup grants
+echo "\n> Backuping grants to 'GRANTS.txt' ... ";
+file_put_contents("$backup_dir/GRANTS.txt", $grants_commands);
+echo "done.\n";
 
 die("\n> BACKUP FINISHED.\n\n");
 
