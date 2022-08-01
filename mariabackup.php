@@ -144,12 +144,12 @@ echo "done.\n";
 foreach ($databases_selected as $database) {
     echo "\n> Backuping database {$database} to $backup_dir... ";
 
-    $cmd_structure = "mysqldump --routines --triggers --single-transaction --no-data -u root $database > $backup_dir/$database.sql";
+    $cmd_structure = "mysqldump --single-transaction --skip-triggers --no-data -u root $database > $backup_dir/$database.sql";
     exec($cmd_structure);
 
     $arguments_ignored_tables = argumentsIgnoredTables($database);
 
-    $cmd_data = "mysqldump --single-transaction --no-create-info $arguments_ignored_tables -u root $database >> $backup_dir/$database.sql";
+    $cmd_data = "mysqldump --single-transaction --routines --triggers --no-create-info $arguments_ignored_tables -u root $database >> $backup_dir/$database.sql";
     exec($cmd_data);
 
     echo "done.\n";
