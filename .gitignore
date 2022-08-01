@@ -1,3 +1,4 @@
 dump/
 backup/
 Dockerfile
+backup-db_*
