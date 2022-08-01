@@ -1,11 +1,4 @@
 <?php
-// Validate if any option was provided
-if (count($argv) == 1) {
-    echo("> Usage:\n");
-    echo("  php mariabackup.php --databases=*\n");
-    die("  php mariabackup.php --databases=db1,db2\n");
-}
-
 // Selected databases
 $databases_selected = pvalues('--databases');
 
@@ -18,6 +11,26 @@ $port = pvalue('--port') ?: 3306;
 $user = pvalue('--user') ?: 'root';
 $password = pvalue('--password') ?: '';
 $password_interactive = pvalue('-p');
+
+// Just list the databases
+$list_databases = pvalue('-list');
+
+// Validate if any required option were provided. If not, show help.
+if (!$databases_selected && $list_databases !== true) {
+    echo "\n> mariabackup: Performs a backup on selected databases.\n\n";
+    echo "  Examples:\n\n";
+    echo "  List available databases:\n";
+    echo "    php mariabackup.php -list\n\n";
+    echo "  Backup all available databases. A directory will be created in the current directory:\n";
+    echo "    php mariabackup.php --databases=*\n\n";
+    echo "  Backup one database:\n";
+    echo "    php mariabackup.php --databases=db1\n\n";
+    echo "  Backup some databases, ignore some tables data but preserve its structures. Ask for the server password interactively:\n";
+    echo "    php mariabackup.php --databases=db1,db2,db3 --ignore-table=db2.table1,db2.table2,db3.table_a --user=root -p\n\n";
+    echo "  Backup some databases, passing the server password inline:\n";
+    echo "    php mariabackup.php --databases=db1 --host=localhost --user=root --port=3306 --password=hunter2\n\n";
+    die();
+}
 
 /*
     Ask for the password (-p)
@@ -46,6 +59,18 @@ try {
     die("> Error connecting to database server.  (exception message: " . $e->getMessage() . ")\n");
 }
 
+// Get all databases names
+$databases = statement("show databases", "Error retrieving databases list.")->fetchAll(PDO::FETCH_COLUMN);
+
+// List databases and exit
+if ($list_databases === true) {
+    echo("> Databases:\n");
+    foreach ($databases as $database) {
+        echo("  - " . $database . "\n");
+    }
+    die();
+}
+
 // Get the @@GLOBAL.basedir to use on directory name
 $basedir = statement('select @@GLOBAL.basedir as basedir', 'Error retrieving @@GLOBAL.basedir.')->fetchColumn();
 
@@ -71,9 +96,6 @@ foreach ($user_hosts as $user_host) {
     }
     $grants_commands .= "\n\n";
 }
-
-// Get all databases names
-$databases = statement("show databases", "Error retrieving databases list.")->fetchAll(PDO::FETCH_COLUMN);
 
 // Check if at least one database was returned
 if (count($databases) === 0) {
