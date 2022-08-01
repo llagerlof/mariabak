@@ -115,7 +115,7 @@ if (empty($databases_selected)) {
 }
 
 // Print selected databases
-echo("> Selected databases:\n");
+echo("\n> Selected databases:\n");
 foreach ($databases_selected as $database) {
     echo("  - " . $database . "\n");
 }
@@ -123,24 +123,26 @@ foreach ($databases_selected as $database) {
 echo "\n";
 
 // Create the backup directory
-$backup_dir = getcwd() . '/backup-db_' . date('Y-m-d_H-i-s') . '_basedir[' . str2filename($basedir) . ']_datadir[' . str2filename($datadir) . ']';
+$backup_dir_basename = 'backup-db_' . date('Y-m-d_H-i-s') . '_basedir[' . str2filename($basedir) . ']_datadir[' . str2filename($datadir) . ']';
+$backup_dir = getcwd() . "/$backup_dir_basename";
 
 if (file_exists($backup_dir) && !is_dir($backup_dir)) {
-    die("> Error: Directory $backup_dir could not be created because a file with the same name already exists.\n");
+    die("> Error: Directory '$backup_dir_basename' could not be created because a file with the same name already exists.\n");
 }
 
 if (!is_dir($backup_dir)) {
     if (!is_writable(getcwd())) {
-        die("> Error: Directory $backup_dir could not be created. Permission denied.\n");
+        die("> Error: Directory '$backup_dir_basename' could not be created. Permission denied.\n");
     } else {
-        echo "> Creating directory $backup_dir...\n";
+        echo("> BACKUP STARTED...\n\n");
+        echo "> Creating backup directory '$backup_dir_basename' ...\n";
         mkdir($backup_dir, 0776);
     }
 }
 
 // Check if backup directory already have backup files (.sql)
 if (!empty(glob("$backup_dir/*.sql"))) {
-    echo "> Error: Directory $backup_dir already contains backup files.\n\n";
+    echo "> Error: Directory '$backup_dir_basename' already contains backup files.\n\n";
     $a = readline("Overwrite existing files? (y/n) [default n]: ");
     if (trim(strtolower($a)) != 'y') {
         die("\n> Backup cancelled.\n");
@@ -148,23 +150,23 @@ if (!empty(glob("$backup_dir/*.sql"))) {
 }
 
 // Backup system variables
-echo "\n> Backuping system variables to SYSTEM_VARIABLES.txt... ";
+echo "\n> Backuping system variables to 'SYSTEM_VARIABLES.txt' ... ";
 file_put_contents("$backup_dir/SYSTEM_VARIABLES.txt", $csv_system_variables);
 echo "done.\n";
 
 // Backup users ans hosts
-echo "\n> Backuping users and hosts to USER_HOSTS.txt... ";
+echo "\n> Backuping users and hosts to 'USER_HOSTS.txt' ... ";
 file_put_contents("$backup_dir/USERS_HOSTS.txt", $csv_user_hosts);
 echo "done.\n";
 
 // Backup grants
-echo "\n> Backuping grants to GRANTS.txt... ";
+echo "\n> Backuping grants to 'GRANTS.txt' ... ";
 file_put_contents("$backup_dir/GRANTS.txt", $grants_commands);
 echo "done.\n";
 
 // Make a backup of each database in the list to a separate file using mysqldump
 foreach ($databases_selected as $database) {
-    echo "\n> Backuping database {$database} to $backup_dir... ";
+    echo "\n> Backuping database '{$database}' ... ";
 
     $cmd_structure = "mysqldump --single-transaction --skip-triggers --no-data -u root $database > $backup_dir/$database.sql";
     exec($cmd_structure);
@@ -177,7 +179,7 @@ foreach ($databases_selected as $database) {
     echo "done.\n";
 }
 
-die("\n> Backup finished.\n");
+die("\n> BACKUP FINISHED.\n\n");
 
 
 /* Utility functions */
