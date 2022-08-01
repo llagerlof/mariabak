@@ -12,9 +12,36 @@ $databases_selected = pvalues('--databases');
 // Selected tables to ignore data, but keeping structure
 $tables_ignored_data = pvalues('--ignore-data');
 
+// Connection details
+$host = pvalue('--host') ?: 'localhost';
+$port = pvalue('--port') ?: 3306;
+$user = pvalue('--user') ?: 'root';
+$password = pvalue('--password') ?: '';
+$password_interactive = pvalue('-p');
+
+/*
+    Ask for the password (-p)
+
+    - Hiding the password only works on Linux shell.
+    - The Linux read command performs a trim() on typed string, so
+      if your password start or end with spaces, use --password=" yourpassword " instead.
+*/
+if ($password_interactive === true) {
+    if (strtolower(php_uname('s')) == 'linux') {
+        echo 'Enter password: ';
+        // Thank you, Antony Penn, for the hidden typing technique (https://www.php.net/manual/en/function.readline.php)
+        $handle = popen("read -s; echo \$REPLY", 'r');
+        // read command adds a line break at the end of string, so it must be removed.
+        $password = str_replace(PHP_EOL, '', fgets($handle, 256));
+        pclose($handle);
+    } else {
+        $password = readline('Enter password (CAUTION: the password will be printed while you type): ');
+    }
+}
+
 // Connect to MariaDB database using PDO
 try {
-    $db = new PDO('mysql:host=localhost', 'root', '');
+    $db = new PDO('mysql:host=' . $host, $user, $password);
 } catch (Exception $e) {
     die("> Error connecting to database server.  (exception message: " . $e->getMessage() . ")\n");
 }
@@ -202,7 +229,7 @@ function array2csv(array $array_2d): string
  * Build a string to represent the ignored tables arguments
  *
  * @param string $database The database name.
- * 
+ *
  * @return string
  */
 function argumentsIgnoredTables($database): string
@@ -237,9 +264,11 @@ function pvalue(string $param)
 
     $param_value = false;
     foreach($argv as $arg) {
-        if (strpos($arg, $param . '=') !== false) {
+        if (preg_match('/^'.$param . '=' . '/', $arg)) {
             $param_pieces = explode("=", $arg);
-            $param_value = trim($param_pieces[1] ?? '');
+            $param_value = $param_pieces[1] ?? '';
+        } elseif (preg_match('/^' . $param . '/', $arg)) {
+            $param_value = true;
         }
     }
 
