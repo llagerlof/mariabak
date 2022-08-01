@@ -3,7 +3,7 @@
 $databases_selected = pvalues('--databases');
 
 // Selected tables to ignore data, but keeping structure
-$tables_ignored_data = pvalues('--ignore-data');
+$tables_ignored_data = pvalues('--ignore-tables');
 
 // Connection details
 $host = pvalue('--host') ?: 'localhost';
@@ -19,15 +19,15 @@ $list_databases = pvalue('-list');
 if (!$databases_selected && $list_databases !== true) {
     echo "\n> mariabackup: Performs a backup on selected databases.\n\n";
     echo "  Examples:\n\n";
-    echo "  List available databases:\n";
+    echo "  List databases:\n";
     echo "    php mariabackup.php -list\n\n";
-    echo "  Backup all available databases. A directory will be created in the current directory:\n";
+    echo "  Backup all databases. A directory will be created in current directory:\n";
     echo "    php mariabackup.php --databases=*\n\n";
-    echo "  Backup one database:\n";
-    echo "    php mariabackup.php --databases=db1\n\n";
-    echo "  Backup some databases, ignore some tables data but preserve its structures. Ask for the server password interactively:\n";
-    echo "    php mariabackup.php --databases=db1,db2,db3 --ignore-table=db2.table1,db2.table2,db3.table_a --user=root -p\n\n";
-    echo "  Backup some databases, passing the server password inline:\n";
+    echo "  Backup one database, asking for the server password interactively:\n";
+    echo "    php mariabackup.php --databases=db1 --host=localhost --user=root -p\n\n";
+    echo "  Backup some databases, ignore some tables data but preserve its structure:\n";
+    echo "    php mariabackup.php --databases=db1,db2,db3 --ignore-tables=db2.table1,db2.table2,db3.table_a --user=root -p\n\n";
+    echo "  Backup one database, passing the server password inline:\n";
     echo "    php mariabackup.php --databases=db1 --host=localhost --user=root --port=3306 --password=hunter2\n\n";
     die();
 }
