@@ -1,6 +1,6 @@
 # mariabackup
 
-**mariabackup** it's a command-line program in one file, created to facilitate some backup operations on MariaDB and MySQL databases using mysqldump, such as:
+**mariabackup** is a command-line program in one file, created to facilitate some backup operations on MariaDB and MySQL databases using mysqldump, such as:
 
 - One dump file for each database.
 - You can opt-out dump data from specific tables. The tables structure will be preserved.
