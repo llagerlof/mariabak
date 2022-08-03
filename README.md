@@ -6,7 +6,7 @@
 - You can opt-out dump data from specific tables. The tables structure will be preserved.
 - Select which databases to backup, or all using the * wildcard.
 - One directory with a timestamp will be created for each backup operation. This directory is created inside the same directory the command was executed.
-- As a plus, it backups all the user grants and system variables to a separate file.
+- It backups all the user grants, system variables and events to a separate file.
 
 ## Minimum requirements
 
