@@ -149,17 +149,28 @@ if (!empty(glob("$backup_dir/*.sql"))) {
     }
 }
 
+// Identify databases with events
+$events = statement('select event_schema from information_schema.events', 'Error retrieving events.')->fetchAll(PDO::FETCH_COLUMN);
+
 // Make a backup of each database in the list to a separate file using mysqldump
 foreach ($databases_selected as $database) {
     echo "\n> Backuping database '{$database}' ... ";
 
-    $cmd_structure = "mysqldump --single-transaction --skip-triggers --no-data -u root $database > $backup_dir/$database.sql";
+    // Backup structure
+    $cmd_structure = "mysqldump --single-transaction --skip-triggers --no-data --host=$host --port=$port --user=$user --password=$password $database > $backup_dir/$database.sql";
     exec($cmd_structure);
 
     $arguments_ignored_tables = argumentsIgnoredTables($database);
 
-    $cmd_data = "mysqldump --single-transaction --routines --triggers --no-create-info $arguments_ignored_tables -u root $database >> $backup_dir/$database.sql";
+    // Backup data
+    $cmd_data = "mysqldump --single-transaction --routines --triggers --no-create-info $arguments_ignored_tables --host=$host --port=$port --user=$user --password=$password $database >> $backup_dir/$database.sql";
     exec($cmd_data);
+
+    // Backup events
+    if (in_array($database, $events)) {
+        $cmd_events = "mysqldump --no-create-db --no-create-info --no-data --skip-triggers --events --host=$host --port=$port --user=$user --password=$password $database > $backup_dir/$database.events.sql";
+        exec($cmd_events);
+    }
 
     echo "done.\n";
 }
