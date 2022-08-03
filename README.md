@@ -13,6 +13,10 @@
 - **PHP 7**+ with **pdo_mysql** extension enabled.
 - You must have the credentials (username and password) with enough privileges to perform a backup on selected server.
 
+## Download
+
+[version 1.0.0](https://raw.githubusercontent.com/llagerlof/mariabackup/master/mariabackup.php)
+
 ## Quick start
 
 **List databases:**

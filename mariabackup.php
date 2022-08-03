@@ -1,4 +1,16 @@
 <?php
+/**
+ * mariabackup
+ *
+ * mariabackup is a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.
+ *
+ * @package    mariabackup
+ * @version    1.0.0
+ * @author     Lawrence Lagerlof <llagerlof@gmail.com>
+ * @link       http://github.com/llagerlof/mariabackup
+ * @license    https://opensource.org/licenses/MIT MIT
+ */
+
 // Selected databases
 $databases_selected = pvalues('--databases');
 
