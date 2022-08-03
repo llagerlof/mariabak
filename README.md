@@ -48,3 +48,55 @@ $ php mariabackup.php --databases=db1,db2,db3 --ignore-tables=db2.table1,db2.tab
 ```shell
 $ php mariabackup.php --databases=db1 --host=localhost --user=root --port=3306 --password=hunter2  # Caution with this one. The shell can save command history.
 ```
+
+## Options documentation
+
+**Conventions:**
+
+- All options that require a parameter start with two dashes.
+- All options that NOT require a parameter start with one dash.
+
+**Options:**
+
+`--databases` : Comma separated databases to backup. Use * for all.
+
+```shell
+$ php mariabackup.php --databases=*
+$ php mariabackup.php --databases=mydatabase,otherdatabase,db3
+```
+
+`--ignore-tables` : Comma separated tables to NOT backup data. The table structure will be preserved
+
+```shell
+$ php mariabackup.php --ignore-tables=mydatabase.log,mydatabase.photos,db3.cache --databases=mydatabase,otherdatabase,db3
+```
+
+`-list` : Just list all available databases. Doesn't perform a backup
+
+```shell
+$ php mariabackup.php -list
+```
+
+`--host` : The server IP or hostname
+
+```shell
+$ php mariabackup.php --host=localhost -list
+```
+
+`--port` : The server port
+
+```shell
+$ php mariabackup.php --port=3306 --databases=mydb
+```
+
+`--password` : The server password
+
+```shell
+$ php mariabackup.php --password=hunter2 --databases=* # CAUTION, the shell can save command-line history
+```
+
+`-p` : Ask user to type the password
+
+```shell
+$ php mariabackup.php -p --databases=*
+```
