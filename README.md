@@ -8,6 +8,10 @@
 - One directory with a timestamp will be created for each backup operation. This directory is created inside the same directory the command was executed.
 - It backups all the user grants, system variables and events to a separate file.
 
+## Hands-on
+
+![mariabackup](https://user-images.githubusercontent.com/193798/183129717-5ef88ce9-adbd-4a86-bba0-63b8da8365a8.gif)
+
 ## Minimum requirements
 
 - **PHP 7**+ with **pdo_mysql** extension enabled.
@@ -15,7 +19,7 @@
 
 ## Download
 
-[version 1.0.0](https://raw.githubusercontent.com/llagerlof/mariabackup/master/mariabackup.php)
+[version 1.0.0](https://raw.githubusercontent.com/llagerlof/mariabackup/master/mariabackup.php) (right click, save link as)
 
 ## Quick start
 
