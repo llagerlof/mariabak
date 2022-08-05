@@ -15,6 +15,7 @@
 ## Minimum requirements
 
 - **PHP 7**+ with **pdo_mysql** extension enabled.
+- MariaDB or MySQL client (because mysqldump).
 - You must have the credentials (username and password) with enough privileges to perform a backup on selected server.
 
 ## Download
