@@ -2,3 +2,7 @@ dump/
 backup/
 Dockerfile
 backup-db_*
+.phpunit.result.cache
+rec/
+tests/
+vendor/
