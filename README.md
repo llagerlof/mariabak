@@ -14,13 +14,19 @@
 
 ## Minimum requirements
 
-- **PHP 7**+ with **pdo_mysql** extension enabled.
-- MariaDB or MySQL client (because mysqldump).
-- You must have the credentials (username and password) with enough privileges to perform a backup on selected server.
+- **PHP 7**+ on PATH with **pdo_mysql** extension enabled.
+- **mysqldump** on PATH (it's part of MariaDB or MySQL client).
+- You must have credentials (username and password) with enough privileges to perform a backup from selected server.
 
-## Download
+## Install
 
-[version 1.0.0](https://raw.githubusercontent.com/llagerlof/mariabackup/master/mariabackup.php) (right click, save link as)
+You have two options:
+
+- Download the standalone script [mariabackup.php](https://raw.githubusercontent.com/llagerlof/mariabackup/master/mariabackup.php) 1.0.1 (right click, save link as)
+
+- Use the installer. [Download](https://github.com/llagerlof/mariabackup/archive/refs/heads/master.zip) or clone this repository and execute the **install.sh**
+
+Note: The installer will copy and rename `mariabackup.php` to `/usr/bin/mariabackup` and make it executable, so you just need to type **mariabackup** from anywhere to use it.
 
 ## Quick start
 

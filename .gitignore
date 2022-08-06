@@ -6,3 +6,4 @@ backup-db_*
 rec/
 tests/
 vendor/
+build/
