@@ -22,11 +22,11 @@
 
 You have two options:
 
-- Download the standalone script [mariabackup.php](https://raw.githubusercontent.com/llagerlof/mariabackup/master/mariabackup.php) 1.0.1 (right click, save link as)
+- <sup>(Linux/Windows)</sup> Download the standalone script [mariabackup.php](https://raw.githubusercontent.com/llagerlof/mariabackup/master/mariabackup.php) 1.0.1 (right click, save link as)
 
-- Use the installer. [Download](https://github.com/llagerlof/mariabackup/archive/refs/heads/master.zip) or clone this repository and execute the **install.sh**
+- <sup>(Linux)</sup> Use the installer. [Download](https://github.com/llagerlof/mariabackup/archive/refs/heads/master.zip) or clone this repository and execute the **install.sh**
 
-Note: The installer will copy and rename `mariabackup.php` to `/usr/bin/mariabackup` and make it executable, so you just need to type **mariabackup** from anywhere to use it.
+Note: The installer will copy and rename `mariabackup.php` to `/usr/bin/mariabackup` and make it executable, so after the installation you can just type `mariabackup` from anywhere to use it.
 
 ## Quick start
 
