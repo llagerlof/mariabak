@@ -6,7 +6,7 @@
  * mariabak is a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.
  *
  * @package    mariabak
- * @version    1.2.0
+ * @version    1.2.1
  * @author     Lawrence Lagerlof <llagerlof@gmail.com>
  * @link       http://github.com/llagerlof/mariabak
  * @license    https://opensource.org/licenses/MIT MIT
@@ -31,17 +31,18 @@ $list_databases = pvalue('-list');
 // Validate if any required option were provided. If not, show help.
 if (!$databases_selected && $list_databases !== true) {
     echo "\n> mariabak: Performs a backup on selected databases.\n\n";
-    echo "  Examples:\n\n";
-    echo "  List databases:\n";
-    echo "    php mariabak.php -list\n\n";
-    echo "  Backup all databases. A directory will be created in current directory:\n";
-    echo "    php mariabak.php --databases=*\n\n";
-    echo "  Backup one database, asking for the server password interactively:\n";
-    echo "    php mariabak.php --databases=db1 --host=localhost --user=root -p\n\n";
-    echo "  Backup some databases, ignore some tables data but preserve its structure:\n";
-    echo "    php mariabak.php --databases=db1,db2,db3 --ignore-tables=db2.table1,db2.table2,db3.table_a --user=root -p\n\n";
-    echo "  Backup one database, passing the server password inline:\n";
-    echo "    php mariabak.php --databases=db1 --host=localhost --user=root --port=3306 --password=hunter2\n\n";
+    echo "  Usage:\n\n";
+    echo "    List databases:\n\n";
+    echo "      $ mariabak -list          # if you used the installer\n\n";
+    echo "      $ php mariabak.php -list  # if you didn't use the installer\n\n";
+    echo "    Backup all databases. A directory will be created in current directory:\n\n";
+    echo "      $ mariabak --databases=*\n\n";
+    echo "    Backup one database, asking for the server password interactively:\n\n";
+    echo "      $ mariabak --databases=db1 --host=localhost --user=root -p\n\n";
+    echo "    Backup some databases, ignore some tables data but preserve its structure:\n\n";
+    echo "      $ mariabak --databases=db1,db2,db3 --ignore-tables=db2.table1,db2.table2,db3.table_a\n\n";
+    echo "    Backup one database, passing the server password inline:\n\n";
+    echo "      $ mariabak --databases=db1 --host=localhost --port=3306 --user=root --password=hunter2\n\n";
     die();
 }
 

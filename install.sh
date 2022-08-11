@@ -3,7 +3,7 @@
 MARIABAK_PATH="$(dirname $0)/mariabak.php"
 MINIMUM_REQUIREMENTS="MINIMUM REQUIREMENTS (both must be on PATH):\n  - PHP 7+\n  - mysqldump (it's part of MariaDB/MySQL client)\n"
 
-echo -e "\n> Installer for mariabak 1.2.0\n"
+echo -e "\n> Installer for mariabak 1.2.1\n"
 
 # Test if php is on path
 if ! command -v php &> /dev/null ;then
