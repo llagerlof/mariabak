@@ -1,26 +1,26 @@
 #!/bin/bash
 
-MARIABACKUP_PATH="$(dirname $0)/mariabackup.php"
+MARIABAK_PATH="$(dirname $0)/mariabak.php"
 MINIMUM_REQUIREMENTS="MINIMUM REQUIREMENTS (both must be on PATH):\n  - PHP 7+\n  - mysqldump (it's part of MariaDB/MySQL client)\n"
 
-echo -e "\n> Installer for mariabackup 1.0.1\n"
+echo -e "\n> Installer for mariabak 1.2.0\n"
 
 # Test if php is on path
 if ! command -v php &> /dev/null ;then
     echo -e "ERROR: php executable not found on PATH. Installation cancelled.\n";
-    echo -e $MINIMUM_REQUIREMENTS;
-    exit;
+    echo -e $MINIMUM_REQUIREMENTS
+    exit
 fi
 
 # Test if mysqldump is on path
 if ! command -v mysqldump &> /dev/null ;then
-    echo -e "ERROR: mysqldump executable not found on PATH. Installation cancelled.\n";
-    echo -e $MINIMUM_REQUIREMENTS;
-    exit;
+    echo -e "ERROR: mysqldump executable not found on PATH. Installation cancelled.\n"
+    echo -e $MINIMUM_REQUIREMENTS
+    exit
 fi
 
 # Ask for user confirmation
-echo -e "This script will install mariabackup on /usr/bin and make it executable.\n"
+echo -e "This script will install mariabak on /usr/bin and make it executable.\n"
 echo -e "Proceed (y/N)?"
 
 read a
@@ -30,8 +30,8 @@ if [[ ! "$a" =~ ^(y|Y) ]] ;then
     exit
 fi
 
-if test -f "/usr/bin/mariabackup"; then
-    echo -e "The file /usr/bin/mariabackup already exist.\n"
+if test -f "/usr/bin/mariabak"; then
+    echo -e "The file /usr/bin/mariabak already exist.\n"
     echo -e "Overwrite (y/N)?"
 
     read a
@@ -43,20 +43,20 @@ if test -f "/usr/bin/mariabackup"; then
 fi
 
 # Try to copy the script, removing its extension
-sudo cp $MARIABACKUP_PATH /usr/bin/mariabackup
+sudo cp $MARIABAK_PATH /usr/bin/mariabak
 
 if [ $? -ne 0 ]; then
-   echo -e "ERROR: Could not install mariabackup in /usr/bin\n"
+   echo -e "ERROR: Could not install mariabak in /usr/bin\n"
    exit
 fi
 
 # Try to make the copied file executable
-sudo chmod +x /usr/bin/mariabackup
+sudo chmod +x /usr/bin/mariabak
 
 if [ $? -ne 0 ]; then
-   echo -e "ERROR: Could not set to executable the script /usr/bin/mariabackup\n"
+   echo -e "ERROR: Could not set to executable the script /usr/bin/mariabak\n"
    exit
 fi
 
-echo -e "\nSUCCESS! mariabackup installed.\n"
-echo -e "Try it by typing \"mariabackup\". A help will be shown.\n"
+echo -e "\nSUCCESS! mariabak installed.\n"
+echo -e "Try it by typing \"mariabak\". A help will be shown.\n"
