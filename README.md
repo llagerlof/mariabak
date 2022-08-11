@@ -18,9 +18,9 @@
 
 You have two options:
 
-- Download the standalone script [mariabak.php](https://raw.githubusercontent.com/llagerlof/mariabak/master/mariabak.php) 1.2.0 (right click, save link as)
+- <sup>(Linux/Windows)</sup> Download the standalone script [mariabak.php](https://raw.githubusercontent.com/llagerlof/mariabak/master/mariabak.php) 1.2.0 (right click, save link as)
 
-- Use the installer. [Download](https://github.com/llagerlof/mariabak/archive/refs/heads/master.zip) or clone this repository and execute the `install.sh`
+- <sup>(Linux)</sup> Use the installer. [Download](https://github.com/llagerlof/mariabak/archive/refs/heads/master.zip) or clone this repository and execute the `install.sh`
 
 Note: The installer will copy and rename `mariabak.php` to `/usr/bin/mariabak` and make it executable, so you just need to type `mariabak` from anywhere to use it.
 
