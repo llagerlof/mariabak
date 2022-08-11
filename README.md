@@ -8,6 +8,12 @@
 - One directory with a timestamp will be created for each backup operation. This directory is created inside the same directory the command was executed.
 - It backups all the user grants, system variables and events to a separate file.
 
+## Hands-on
+
+This presentation assume `install.sh` was used for the installation. If you want to use `mariabak.php` directly, change `mariabak` to `php mariabak.php`.
+
+![mariabak](https://user-images.githubusercontent.com/193798/184143085-23380ab9-03da-4d66-8ba8-1aaa1650f3ea.gif)
+
 ## Minimum requirements
 
 - **PHP 7**+ on PATH with **pdo_mysql** extension enabled.
@@ -18,9 +24,9 @@
 
 You have two options:
 
-- <sup>(Linux/Windows)</sup> Download the standalone script [mariabak.php](https://raw.githubusercontent.com/llagerlof/mariabak/master/mariabak.php) 1.2.0 (right click, save link as)
-
 - <sup>(Linux)</sup> Use the installer. [Download](https://github.com/llagerlof/mariabak/archive/refs/heads/master.zip) or clone this repository and execute the `install.sh`
+
+- <sup>(Linux/Windows)</sup> Download the standalone script [mariabak.php](https://raw.githubusercontent.com/llagerlof/mariabak/master/mariabak.php) 1.2.0 (right click, save link as)
 
 Note: The installer will copy and rename `mariabak.php` to `/usr/bin/mariabak` and make it executable, so you just need to type `mariabak` from anywhere to use it.
 
@@ -28,32 +34,40 @@ Note: The installer will copy and rename `mariabak.php` to `/usr/bin/mariabak` a
 
 **List databases:**
 
-  ```shell
-  $ php mariabak.php -list  # default localhost, user root, empty password
-  ```
+If you used the installer:
+
+```shell
+$ mariabak -list     # default localhost, user root, empty password
+```
+
+If you prefer to use the .php directly:
+
+```shell
+$ php mariabak.php -list
+```
 
 **Backup all databases. A directory will be created in current directory:**
 
 ```shell
-$ php mariabak.php --databases=*
+$ mariabak --databases=*
 ```
 
 **Backup one database, asking for the server password interactively:**
 
 ```shell
-$ php mariabak.php --databases=db1 --host=localhost --user=root -p
+$ mariabak --databases=db1 --host=localhost --user=root -p
 ```
 
 **Backup some databases, ignore some tables data but preserve its structure:**
 
 ```shell
-$ php mariabak.php --databases=db1,db2,db3 --ignore-tables=db2.table1,db2.table2,db3.table_a --user=root -p
+$ mariabak --databases=db1,db2,db3 --ignore-tables=db2.table1,db2.table2,db3.table_a --user=root -p
 ```
 
 **Backup one database, passing the server password inline:**
 
 ```shell
-$ php mariabak.php --databases=db1 --host=localhost --user=root --port=3306 --password=hunter2  # Caution with this one. The shell can save command history.
+$ mariabak --databases=db1 --host=localhost --user=root --port=3306 --password=hunter2  # Caution with this one. The shell can save command history.
 ```
 
 ## Options documentation
@@ -68,48 +82,48 @@ $ php mariabak.php --databases=db1 --host=localhost --user=root --port=3306 --pa
 `--databases` : Comma separated databases to backup. Use * for all.
 
 ```shell
-$ php mariabak.php --databases=*
-$ php mariabak.php --databases=mydatabase,otherdatabase,db3
+$ mariabak --databases=*
+$ mariabak --databases=mydatabase,otherdatabase,db3
 ```
 
 `--ignore-tables` : Comma separated tables to NOT backup data. The table structure will be preserved.
 
 ```shell
-$ php mariabak.php --ignore-tables=mydatabase.log,mydatabase.photos,db3.cache --databases=mydatabase,otherdatabase,db3
+$ mariabak --ignore-tables=mydatabase.log,mydatabase.photos,db3.cache --databases=mydatabase,otherdatabase,db3
 ```
 
 `-list` : Just list all available databases. Doesn't perform a backup.
 
 ```shell
-$ php mariabak.php -list
+$ mariabak -list
 ```
 
 `--host` : The server IP or hostname. If ommited assume "localhost".
 
 ```shell
-$ php mariabak.php --host=localhost -list
+$ mariabak --host=localhost -list
 ```
 
 `--port` : The server port. If ommited assume "3306".
 
 ```shell
-$ php mariabak.php --port=3306 --databases=mydb
+$ mariabak --port=3306 --databases=mydb
 ```
 
 `--user` : The user that will connect to server. If ommited assume "root".
 
 ```shell
-$ php mariabak.php --user=root --databases=db1,db2
+$ mariabak --user=root --databases=db1,db2
 ```
 
 `--password` : The server password. If ommited assume empty string.
 
 ```shell
-$ php mariabak.php --password=hunter2 --databases=* # CAUTION, the shell can save command-line history
+$ mariabak --password=hunter2 --databases=* # CAUTION, the shell can save command-line history
 ```
 
 `-p` : Ask user to type the password.
 
 ```shell
-$ php mariabak.php -p --databases=*
+$ mariabak -p --databases=*
 ```
