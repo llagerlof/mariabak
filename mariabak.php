@@ -6,7 +6,7 @@
  * mariabak is a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.
  *
  * @package    mariabak
- * @version    1.2.2
+ * @version    1.2.3
  * @author     Lawrence Lagerlof <llagerlof@gmail.com>
  * @link       http://github.com/llagerlof/mariabak
  * @license    https://opensource.org/licenses/MIT MIT
@@ -30,7 +30,7 @@ $list_databases = pvalue('-list');
 
 // Validate if any required option were provided. If not, show help.
 if (!$databases_selected && $list_databases !== true) {
-    echo "\n> mariabak 1.2.2: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
+    echo "\n> mariabak 1.2.3: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
     echo "  Usage:\n\n";
     echo "    List databases:\n\n";
     echo "      $ mariabak -list          # if you used the installer\n\n";
@@ -172,18 +172,24 @@ foreach ($databases_selected as $database) {
 
     // Backup structure
     $cmd_structure = "mysqldump --single-transaction --skip-triggers --no-data --host=$host --port=$port --user=$user --password=$password $database > $backup_dir/$database.sql";
-    exec($cmd_structure);
+    exec($cmd_structure, $output, $result_code);
+
+    checkMysqldumpError($result_code);
 
     $arguments_ignored_tables = argumentsIgnoredTables($database);
 
     // Backup data
     $cmd_data = "mysqldump --single-transaction --routines --triggers --no-create-info $arguments_ignored_tables --host=$host --port=$port --user=$user --password=$password $database >> $backup_dir/$database.sql";
-    exec($cmd_data);
+    exec($cmd_data, $output, $result_code);
+
+    checkMysqldumpError($result_code);
 
     // Backup events
     if (in_array($database, $events)) {
         $cmd_events = "mysqldump --no-create-db --no-create-info --no-data --skip-triggers --events --host=$host --port=$port --user=$user --password=$password $database > $backup_dir/$database.events.sql";
-        exec($cmd_events);
+        exec($cmd_events, $output, $result_code);
+
+        checkMysqldumpError($result_code);
     }
 
     echo "done.\n";
@@ -204,7 +210,7 @@ echo "\n> Backuping grants to 'GRANTS.txt' ... ";
 file_put_contents("$backup_dir/GRANTS.txt", $grants_commands);
 echo "done.\n";
 
-die("\n> BACKUP FINISHED.\n\n");
+die("\n> BACKUP FINISHED SUCCESSFULLY.\n\n");
 
 
 /* Utility functions */
@@ -359,4 +365,22 @@ function statement(string $query, string $error_message): PDOStatement
     }
 
     return $stmt;
+}
+
+/**
+ * Check if the result code from exec('mysqldump') returned a number different than zero (so an error occurred)
+ *
+ * @param integer $result_code
+ *
+ * @return void
+ */
+function checkMysqldumpError(int $result_code): void
+{
+    global $backup_dir_basename;
+
+    if ($result_code !== 0) {
+        echo "\n> Error during mysqldump execution: code $result_code\n\n";
+        echo "> Delete manually the incomplete backup directory '$backup_dir_basename'\n\n";
+        die("\n> BACKUP FAILED!\n\n");
+    }
 }
