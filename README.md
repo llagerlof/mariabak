@@ -8,6 +8,8 @@
 - One directory with a timestamp will be created for each backup operation. This directory is created inside the same directory the command was executed.
 - It backups all the user grants, system variables and events to a separate file.
 
+Do you have a question? [Ask it on GitHub Discussions](https://github.com/llagerlof/mariabak/discussions).
+
 ## Hands-on
 
 This presentation assume `install.sh` was used for the installation. If you want to use `mariabak.php` directly, change `mariabak` to `php mariabak.php`.
