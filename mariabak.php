@@ -6,11 +6,21 @@
  * mariabak is a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.
  *
  * @package    mariabak
- * @version    1.2.3
+ * @version    1.2.4
  * @author     Lawrence Lagerlof <llagerlof@gmail.com>
  * @link       http://github.com/llagerlof/mariabak
  * @license    https://opensource.org/licenses/MIT MIT
  */
+
+// Check if php exist on PATH
+if (!command_exists('php --version')) {
+    die("> 'php': command unavailable. Must be on on PATH. \n");
+}
+
+// Check if mysqldump exist on PATH
+if (!command_exists('mysqldump --version')) {
+    die("> 'mysqldump': command unavailable. Must be on on PATH (mysqldump is part of MariaDB/MySQL client). \n");
+}
 
 // Selected databases
 $databases_selected = pvalues('--databases');
@@ -30,7 +40,7 @@ $list_databases = pvalue('-list');
 
 // Validate if any required option were provided. If not, show help.
 if (!$databases_selected && $list_databases !== true) {
-    echo "\n> mariabak 1.2.3: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
+    echo "\n> mariabak 1.2.4: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
     echo "  Usage:\n\n";
     echo "    List databases:\n\n";
     echo "      $ mariabak -list          # if you used the installer\n\n";
@@ -383,4 +393,50 @@ function checkMysqldumpError(int $result_code): void
         echo "> Delete manually the incomplete backup directory '$backup_dir_basename'\n\n";
         die("\n> BACKUP FAILED!\n\n");
     }
+}
+
+/**
+ * Get the current operating system name (linux, windows or darwin)
+ *
+ * @return string The current OS name
+ */
+function current_os(): string
+{
+    $os = strtolower(php_uname('s'));
+
+    if ((strpos($os, 'windows') !== false) || (strpos($os, 'winnt') !== false)) {
+        $os_name = 'windows';
+    } elseif (strpos($os, 'darwin') !== false) {
+        $os_name = 'darwin';
+    } else {
+        // linux, cygwin and "others"
+        $os_name = 'linux';
+    }
+
+    return $os_name;
+}
+
+/**
+ * Check if a command exists under Linux and Windows' cmd
+ *
+ * @param string $command
+ *
+ * @return bool
+ */
+function command_exists(string $command): bool
+{
+    switch(current_os()) {
+        case 'linux':
+            $null_suffix = ' 2>&1';
+            break;
+        case 'windows':
+            $null_suffix = ' >NUL 2>&1';
+            break;
+        default:
+            $null_suffix = '';
+    }
+
+    exec("$command $null_suffix", $output, $result_code);
+
+    return $result_code === 0;
 }
