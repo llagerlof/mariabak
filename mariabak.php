@@ -6,7 +6,7 @@
  * mariabak is a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.
  *
  * @package    mariabak
- * @version    1.2.4
+ * @version    1.2.5
  * @author     Lawrence Lagerlof <llagerlof@gmail.com>
  * @link       http://github.com/llagerlof/mariabak
  * @license    https://opensource.org/licenses/MIT MIT
@@ -40,7 +40,7 @@ $list_databases = pvalue('-list');
 
 // Validate if any required option were provided. If not, show help.
 if (!$databases_selected && $list_databases !== true) {
-    echo "\n> mariabak 1.2.4: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
+    echo "\n> mariabak 1.2.5: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
     echo "  Usage:\n\n";
     echo "    List databases:\n\n";
     echo "      $ mariabak -list          # if you used the installer\n\n";
@@ -184,22 +184,22 @@ foreach ($databases_selected as $database) {
     $cmd_structure = "mysqldump --single-transaction --skip-triggers --no-data --host=$host --port=$port --user=$user --password=$password $database > $backup_dir/$database.sql";
     exec($cmd_structure, $output, $result_code);
 
-    checkMysqldumpError($result_code);
+    check_mysqldump_error($result_code);
 
-    $arguments_ignored_tables = argumentsIgnoredTables($database);
+    $ignored_tables_arguments = ignored_tables_arguments($database);
 
     // Backup data
-    $cmd_data = "mysqldump --single-transaction --routines --triggers --no-create-info $arguments_ignored_tables --host=$host --port=$port --user=$user --password=$password $database >> $backup_dir/$database.sql";
+    $cmd_data = "mysqldump --single-transaction --routines --triggers --no-create-info $ignored_tables_arguments --host=$host --port=$port --user=$user --password=$password $database >> $backup_dir/$database.sql";
     exec($cmd_data, $output, $result_code);
 
-    checkMysqldumpError($result_code);
+    check_mysqldump_error($result_code);
 
     // Backup events
     if (in_array($database, $events)) {
         $cmd_events = "mysqldump --no-create-db --no-create-info --no-data --skip-triggers --events --host=$host --port=$port --user=$user --password=$password $database > $backup_dir/$database.events.sql";
         exec($cmd_events, $output, $result_code);
 
-        checkMysqldumpError($result_code);
+        check_mysqldump_error($result_code);
     }
 
     echo "done.\n";
@@ -297,7 +297,7 @@ function array2csv(array $array_2d): string
  *
  * @return string
  */
-function argumentsIgnoredTables($database): string
+function ignored_tables_arguments($database): string
 {
     global $tables_ignored_data;
 
@@ -384,7 +384,7 @@ function statement(string $query, string $error_message): PDOStatement
  *
  * @return void
  */
-function checkMysqldumpError(int $result_code): void
+function check_mysqldump_error(int $result_code): void
 {
     global $backup_dir_basename;
 
