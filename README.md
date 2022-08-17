@@ -1,14 +1,16 @@
 # mariabak
 
-**mariabak** is a command-line program in one file, created to facilitate some backup operations on MariaDB and MySQL databases using mysqldump, such as:
+**mariabak** is a command-line frontend program for `mysqldump`, created to facilitate some backup operations on MariaDB and MySQL databases.
 
-- One dump file for each database.
-- You can opt-out dump data from specific tables. The tables structure will be preserved.
+All features were created because to achieve the same result using `mysqldump` directly, the user needs to run more than one command. `mariabak` was developed to perform all of them in a single command.
+
+- One dump file for each database (`mysqldump` put all databases into one single dump file)
+- You can opt-out dump data from specific tables. The tables structure will be preserved (`mysqldump –-ignore-table` doesn't keep the table structure).
 - Select which databases to backup, or all using the * wildcard.
 - One directory with a timestamp will be created for each backup operation. This directory is created inside the same directory the command was executed.
 - It backups all the user grants, system variables and events to a separate file.
 
-Do you have a question? [Ask it on GitHub Discussions](https://github.com/llagerlof/mariabak/discussions).
+Do you have a comment or a question? [Post it on GitHub Discussions](https://github.com/llagerlof/mariabak/discussions).
 
 ## Hands-on
 
