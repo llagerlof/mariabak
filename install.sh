@@ -1,11 +1,18 @@
 #!/bin/bash
 
 MARIABAK_PATH="$(dirname $0)/mariabak.php"
+CONFIG_PATH="$(dirname $0)/.mariabak.conf"
 MINIMUM_REQUIREMENTS="MINIMUM REQUIREMENTS (both must be on PATH):\n  - PHP 7+\n  - mysqldump (it's part of MariaDB/MySQL client)\n"
 
 # If mariabak.php doesn't exist in the same directory as this script, exit
 if [ ! -f "$MARIABAK_PATH" ]; then
     echo -e "ERROR: mariabak.php not found in the same directory as this script.\n"
+    exit 1
+fi
+
+# If .mariabak.conf doesn't exist in the same directory as this script, exit
+if [ ! -f "$CONFIG_PATH" ]; then
+    echo -e "ERROR: .mariabak.conf not found in the same directory as this script.\n"
     exit 1
 fi
 
@@ -33,7 +40,7 @@ if ! command -v mysqldump &> /dev/null ;then
     exit 1
 fi
 
-# Ask for user confirmation
+# Ask for user confirmation to install the script
 echo -e "This script will install mariabak on /usr/bin and make it executable.\n"
 echo -e "Proceed (y/N)?"
 
@@ -44,6 +51,7 @@ if [[ ! "$a" =~ ^(y|Y) ]] ;then
     exit 125
 fi
 
+# Ask for user confirmation to overwrite if the script is already installed
 if test -f "/usr/bin/mariabak"; then
     echo -e "The file /usr/bin/mariabak already exist.\n"
     echo -e "Overwrite (y/N)?"
@@ -56,11 +64,29 @@ if test -f "/usr/bin/mariabak"; then
     fi
 fi
 
+# Ask for user confirmation to overwrite the configuration file
+if test -f "$HOME/.mariabak.conf"; then
+    echo -e "The configuration file $HOME/.mariabak.conf already exist.\n"
+    echo -e "Overwrite (y/N)?"
+
+    read a
+
+    if [[ "$a" =~ ^(y|Y) ]] ;then
+        # Try to copy the configuration file
+        cp $CONFIG_PATH $HOME/.mariabak.conf
+
+        if [ $? -ne 0 ]; then
+            echo -e "ERROR: Could not copy .mariabak.conf to $HOME\n"
+            exit 1
+        fi
+    fi
+fi
+
 # Try to copy the script, removing its extension
 sudo cp $MARIABAK_PATH /usr/bin/mariabak
 
 if [ $? -ne 0 ]; then
-   echo -e "ERROR: Could not install mariabak in /usr/bin\n"
+   echo -e "ERROR: Could not copy mariabak to /usr/bin\n"
    exit 1
 fi
 
@@ -72,5 +98,5 @@ if [ $? -ne 0 ]; then
    exit 1
 fi
 
-echo -e "\nSUCCESS! mariabak installed.\n"
+echo -e "\nSUCCESS! mariabak $version installed.\n"
 echo -e "Try it by typing \"mariabak\". A help will be shown.\n"

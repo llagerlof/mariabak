@@ -28,11 +28,11 @@ This presentation assume `install.sh` was used for the installation. If you want
 
 You have two options:
 
-- <sup>(Linux)</sup> Use the installer. [Download](https://github.com/llagerlof/mariabak/archive/refs/heads/master.zip) or clone this repository and execute the `install.sh`
+- <sup>(Linux)</sup> Use the installer. [Download](https://github.com/llagerlof/mariabak/archive/refs/heads/master.zip) or clone this repository and execute the `install.sh` (run as normal user. if necessary sudo password will be asked).
 
 - <sup>(Linux/Windows)</sup> Download the latest version of standalone script [mariabak.php](https://raw.githubusercontent.com/llagerlof/mariabak/master/mariabak.php) (right click, save link as)
 
-Note: The installer will copy and rename `mariabak.php` to `/usr/bin/mariabak` and make it executable, so you just need to type `mariabak` from anywhere to use it.
+Note: The installer will copy and rename `mariabak.php` to `/usr/bin/mariabak` and make it executable, so after install you just need to type `mariabak` from anywhere to use it.
 
 ## Quick start
 
@@ -73,6 +73,12 @@ $ mariabak --databases=db1,db2,db3 --ignore-tables=db2.table1,db2.table2,db3.tab
 ```shell
 $ mariabak --databases=db1 --host=localhost --user=root --port=3306 --password=hunter2  # Caution with this one. The shell can save command history.
 ```
+
+## Configuration file (optional)
+
+When using the `install.sh`, a configuration file called `.mariabak.conf` will be copied to the user home directory. You can edit it to change the name format of backup directory.
+
+The default format is `backup-db_{date}_{time}_{host}_{port}`
 
 ## Options documentation
 
