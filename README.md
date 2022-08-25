@@ -14,9 +14,11 @@ Do you have a comment or a question? [Post it on GitHub Discussions](https://git
 
 ## Hands-on
 
-This presentation assume `install.sh` was used for the installation. If you want to use `mariabak.php` directly, change `mariabak` to `php mariabak.php`.
+This presentation assume `install.sh` was used for the installation.
 
-![mariabak](https://user-images.githubusercontent.com/193798/184143085-23380ab9-03da-4d66-8ba8-1aaa1650f3ea.gif)
+If you want to use `mariabak.php` directly, switch `mariabak` for `php mariabak.php`
+
+![mariabak](https://user-images.githubusercontent.com/193798/186650605-9756cf99-a949-4ae7-b470-3154f9c01bb2.gif)
 
 ## Minimum requirements
 
