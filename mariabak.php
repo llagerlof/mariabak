@@ -466,7 +466,7 @@ function user_home_dir(): string
 }
 
 /**
- * Read the configuration file 'mariabak.conf' in the user home directory
+ * Read the configuration file '.mariabak.conf' in the user home directory
  *
  * return array
  */
