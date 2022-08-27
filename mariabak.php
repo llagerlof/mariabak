@@ -6,7 +6,7 @@
  * mariabak is a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.
  *
  * @package    mariabak
- * @version    1.3.0
+ * @version    1.4.0
  * @author     Lawrence Lagerlof <llagerlof@gmail.com>
  * @link       http://github.com/llagerlof/mariabak
  * @license    https://opensource.org/licenses/MIT MIT
@@ -226,6 +226,12 @@ echo "done.\n";
 // Backup grants
 echo "\n> Backuping grants to 'GRANTS.txt' ... ";
 file_put_contents("$backup_dir/GRANTS.txt", $grants_commands);
+echo "done.\n";
+
+// Backup connection details
+echo "\n> Backuping connection details (host, port, user) to 'CONNECTION_DETAILS.txt' ... ";
+$connection_details = "backup finished at: " . date('Y-m-d H:i:s') . "\n\nhost: $host\nport: $port\nuser: $user\n";
+file_put_contents("$backup_dir/CONNECTION_DETAILS.txt", $connection_details);
 echo "done.\n";
 
 die("\n> BACKUP FINISHED SUCCESSFULLY.\n\n");
