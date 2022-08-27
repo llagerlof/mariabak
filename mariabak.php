@@ -171,7 +171,7 @@ if (!is_dir($backup_dir)) {
 
 // Check if backup directory already have backup files (.sql)
 if (!empty(glob("$backup_dir/*.sql"))) {
-    echo "> Error: Directory '$backup_dir_basename' already contains backup files.\n\n";
+    echo "> Warning: Directory '$backup_dir_basename' already contains backup files.\n\n";
     $a = readline("Overwrite existing files? (y/n) [default n]: ");
     if (trim(strtolower($a)) != 'y') {
         die("\n> Backup cancelled.\n");
@@ -218,7 +218,7 @@ echo "\n> Backuping system variables to 'SYSTEM_VARIABLES.txt' ... ";
 file_put_contents("$backup_dir/SYSTEM_VARIABLES.txt", $csv_system_variables);
 echo "done.\n";
 
-// Backup users ans hosts
+// Backup users and hosts
 echo "\n> Backuping users and hosts to 'USER_HOSTS.txt' ... ";
 file_put_contents("$backup_dir/USERS_HOSTS.txt", $csv_user_hosts);
 echo "done.\n";
