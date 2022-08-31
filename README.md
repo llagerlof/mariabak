@@ -82,14 +82,13 @@ When using the `install.sh`, a configuration file called `.mariabak.conf` will b
 
 The default format is `backup-db_{date}_{time}_{host}_{port}`
 
-## Options documentation
+## Documentation
 
-**Conventions:**
+**Options available:**
 
 - All options that require a parameter start with two dashes.
 - All options that NOT require a parameter start with one dash.
 
-**Options:**
 
 `--databases` : Comma separated databases to backup. Use * for all.
 
@@ -139,3 +138,16 @@ $ mariabak --password=hunter2 --databases=* # CAUTION, the shell can save comman
 ```shell
 $ mariabak -p --databases=*
 ```
+
+---
+
+**NOTE: Necessary permissions to perform a backup**
+
+Backup operations on MariaDB or MySQL server can be made authenticating as 'root' user. If you want to use a differente user he must have the following permissions on all databases:
+
+- select
+- show view
+- lock tables
+- process
+- reload
+- replication client
