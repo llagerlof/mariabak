@@ -1,22 +1,22 @@
 # mariabak
 
-**mariabak** is a command-line frontend program for `mysqldump`, created to facilitate some backup operations on MariaDB and MySQL databases.
+**mariabak** is a command-line front-end program for `mysqldump`, created to facilitate some backup operations on MariaDB and MySQL databases.
 
 All features were created because to achieve the same result using `mysqldump` directly, the user needs to run more than one command. `mariabak` was developed to perform all of them in a single command.
 
-- One dump file for each database (`mysqldump` put all databases into one single dump file)
-- You can opt-out dump data from specific tables. The tables structure will be preserved (`mysqldump –-ignore-table` doesn't keep the table structure).
-- Select which databases to backup, or all using the * wildcard.
-- One directory with a timestamp will be created for each backup operation. This directory is created inside the same directory the command was executed.
+- One dump file for each database (`mysqldump` doesn't create files, just output the data).
+- You can opt out dump data from specific tables. The tables structure will be preserved (`mysqldump –-ignore-table` doesn't keep the table structure).
+- Select which databases to backup, or all, using the * wildcard.
+- One directory with a timestamp will be created for each backup operation. This directory is created in the same directory the command was executed.
 - It backups all the user grants, system variables and events to a separate file.
 
 Do you have a comment or a question? [Post it on GitHub Discussions](https://github.com/llagerlof/mariabak/discussions).
 
 ## Hands-on
 
-This presentation assume `install.sh` was used for the installation.
+This presentation assumes `install.sh` was used for the installation.
 
-If you want to use `mariabak.php` directly, switch `mariabak` for `php mariabak.php`
+If you want to use `mariabak.php` directly, switch `mariabak` to `php mariabak.php`
 
 ![mariabak](https://user-images.githubusercontent.com/193798/186650605-9756cf99-a949-4ae7-b470-3154f9c01bb2.gif)
 
@@ -24,7 +24,7 @@ If you want to use `mariabak.php` directly, switch `mariabak` for `php mariabak.
 
 - **PHP 7**+ on PATH with **pdo_mysql** extension enabled.
 - **mysqldump** on PATH (it's part of MariaDB or MySQL client).
-- You must have credentials (_username and password_) with enough privileges to perform a backup from selected server.
+- You must have credentials (_username and password_) with enough privileges (_check footer note_) to perform a backup from the selected server.
 
 ## Install
 
@@ -32,7 +32,7 @@ You have two options:
 
 - <sup>(Linux)</sup> Use the installer. [Download](https://github.com/llagerlof/mariabak/archive/refs/heads/master.zip) or clone this repository and execute the `install.sh` (run as normal user. if necessary sudo password will be asked).
 
-- <sup>(Linux/Windows)</sup> Download the latest version of standalone script [mariabak.php](https://raw.githubusercontent.com/llagerlof/mariabak/master/mariabak.php) (right click, save link as)
+- <sup>(Linux/Windows)</sup> Download the latest version of the standalone script [mariabak.php](https://raw.githubusercontent.com/llagerlof/mariabak/master/mariabak.php) (right click, save link as)
 
 Note: The installer will copy and rename `mariabak.php` to `/usr/bin/mariabak` and make it executable, so after install you just need to type `mariabak` from anywhere to use it.
 
@@ -52,7 +52,7 @@ If you prefer to use the .php directly:
 $ php mariabak.php -list
 ```
 
-**Backup all databases. A directory will be created in current directory:**
+**Backup all databases. A directory will be created into the current directory:**
 
 ```shell
 $ mariabak --databases=*
@@ -64,7 +64,7 @@ $ mariabak --databases=*
 $ mariabak --databases=db1 --host=localhost --user=root -p
 ```
 
-**Backup some databases, ignore some tables data but preserve its structure:**
+**Backup some databases, ignore some table's data, but preserve its structure:**
 
 ```shell
 $ mariabak --databases=db1,db2,db3 --ignore-tables=db2.table1,db2.table2,db3.table_a --user=root -p
@@ -109,19 +109,19 @@ $ mariabak --ignore-tables=mydatabase.log,mydatabase.photos,db3.cache --database
 $ mariabak -list
 ```
 
-`--host` : The server IP or hostname. If ommited assume "localhost".
+`--host` : The server IP or hostname. If ommited, assume "localhost".
 
 ```shell
 $ mariabak --host=localhost -list
 ```
 
-`--port` : The server port. If ommited assume "3306".
+`--port` : The server port. If ommited, assume "3306".
 
 ```shell
 $ mariabak --port=3306 --databases=mydb
 ```
 
-`--user` : The user that will connect to server. If ommited assume "root".
+`--user` : The user that will connect to server. If ommited, assume "root".
 
 ```shell
 $ mariabak --user=root --databases=db1,db2
@@ -141,9 +141,9 @@ $ mariabak -p --databases=*
 
 ---
 
-**NOTE: Necessary permissions to perform a backup**
+**NOTE: Required privileges to perform a backup**
 
-Backup operations on MariaDB or MySQL server can be made authenticating as 'root' user. If you want to use a different user just to perform a backup he needs the following permissions on all databases:
+Backup operations on MariaDB or MySQL server can be made authenticating as 'root' user. If you want to use a different user to perform a backup he needs the following permissions on all databases:
 
 - select
 - show view
