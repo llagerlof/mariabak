@@ -143,11 +143,10 @@ $ mariabak -p --databases=*
 
 **NOTE: Required privileges to perform a backup**
 
-Backup operations on MariaDB or MySQL server can be made authenticating as 'root' user. If you want to use a different user to perform a backup he needs the following permissions on all databases:
+Backup operations on MariaDB or MySQL server can be made authenticating as 'root' user. If you want to use a different user to perform a backup he needs the following permissions on all databases that you need to backup:
 
 - select
 - show view
 - lock tables
-- process
 - reload
 - replication client

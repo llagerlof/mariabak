@@ -6,7 +6,7 @@
  * mariabak is a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.
  *
  * @package    mariabak
- * @version    1.4.0
+ * @version    1.4.1
  * @author     Lawrence Lagerlof <llagerlof@gmail.com>
  * @link       http://github.com/llagerlof/mariabak
  * @license    https://opensource.org/licenses/MIT MIT
@@ -43,7 +43,7 @@ $list_databases = pvalue('-list');
 
 // Validate if any required option were provided. If not, show help.
 if (!$databases_selected && $list_databases !== true) {
-    echo "\n> mariabak 1.4.0: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
+    echo "\n> mariabak 1.4.1: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
     echo "  Usage:\n\n";
     echo "    List databases:\n\n";
     echo "      $ mariabak -list          # if you used the installer\n\n";
@@ -87,7 +87,7 @@ try {
 }
 
 // Get all databases names
-$databases = statement("show databases", "Error retrieving databases list.")->fetchAll(PDO::FETCH_COLUMN);
+$databases = statement("show databases where `Database` not in ('mysql', 'performance_schema', 'information_schema')", "Error retrieving database list.")->fetchAll(PDO::FETCH_COLUMN);
 
 // List databases and exit
 if ($list_databases === true) {
