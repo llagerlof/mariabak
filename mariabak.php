@@ -6,7 +6,7 @@
  * mariabak is a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.
  *
  * @package    mariabak
- * @version    1.4.1
+ * @version    1.4.2
  * @author     Lawrence Lagerlof <llagerlof@gmail.com>
  * @link       http://github.com/llagerlof/mariabak
  * @license    https://opensource.org/licenses/MIT MIT
@@ -33,7 +33,7 @@ $tables_ignored_data = pvalues('--ignore-tables');
 
 // Connection details
 $host = pvalue('--host') ?: 'localhost';
-$port = pvalue('--port') ?: 3306;
+$port = pvalue('--port') ?: '3306';
 $user = pvalue('--user') ?: 'root';
 $password = pvalue('--password') ?: '';
 $password_interactive = pvalue('-p');
@@ -43,7 +43,7 @@ $list_databases = pvalue('-list');
 
 // Validate if any required option were provided. If not, show help.
 if (!$databases_selected && $list_databases !== true) {
-    echo "\n> mariabak 1.4.1: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
+    echo "\n> mariabak 1.4.2: a command-line script to make MariaDB/MySQL database backup a breeze, using mysqldump.\n\n";
     echo "  Usage:\n\n";
     echo "    List databases:\n\n";
     echo "      $ mariabak -list          # if you used the installer\n\n";
@@ -81,7 +81,7 @@ if ($password_interactive === true) {
 
 // Connect to MariaDB database using PDO
 try {
-    $db = new PDO('mysql:host=' . $host . ';port=' . $port, $user, $password);
+    $db = new PDO('mysql:host=' . $host . ':' . $port, $user, $password);
 } catch (Exception $e) {
     die("> Error connecting to database server.  (exception message: " . $e->getMessage() . ")\n");
 }
@@ -186,7 +186,7 @@ foreach ($databases_selected as $database) {
     echo "\n> Backuping database '{$database}' ... ";
 
     // Backup structure
-    $cmd_structure = "mysqldump --single-transaction --skip-triggers --no-data --host=$host --port=$port --user=$user --password=$password $database > \"$backup_dir/$database.sql\"";
+    $cmd_structure = "mysqldump --single-transaction --skip-triggers --no-data --host=\"$host\" --port=\"$port\" --user=\"$user\" --password=\"$password\" $database > \"$backup_dir/$database.sql\"";
 
     exec($cmd_structure, $output, $result_code);
 
@@ -195,7 +195,7 @@ foreach ($databases_selected as $database) {
     $ignored_tables_arguments = ignored_tables_arguments($database);
 
     // Backup data
-    $cmd_data = "mysqldump --single-transaction --routines --triggers --no-create-info $ignored_tables_arguments --host=$host --port=$port --user=$user --password=$password $database >> \"$backup_dir/$database.sql\"";
+    $cmd_data = "mysqldump --single-transaction --routines --triggers --no-create-info $ignored_tables_arguments --host=\"$host\" --port=\"$port\" --user=\"$user\" --password=\"$password\" $database >> \"$backup_dir/$database.sql\"";
 
     exec($cmd_data, $output, $result_code);
 
@@ -203,7 +203,7 @@ foreach ($databases_selected as $database) {
 
     // Backup events
     if (in_array($database, $events)) {
-        $cmd_events = "mysqldump --no-create-db --no-create-info --no-data --skip-triggers --events --host=$host --port=$port --user=$user --password=$password $database > \"$backup_dir/$database.events.sql\"";
+        $cmd_events = "mysqldump --no-create-db --no-create-info --no-data --skip-triggers --events --host=\"$host\" --port=\"$port\" --user=\"$user\" --password=\"$password\" $database > \"$backup_dir/$database.events.sql\"";
 
         exec($cmd_events, $output, $result_code);
 
